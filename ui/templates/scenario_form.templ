@@ -1,0 +1,30 @@
+package ui
+
+//go:generate templ
+
+templ Scenario_form(title string) {
+<div>
+  <h1 class="text-2xl font-bold">{ title }</h1>
+
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <div role="tablist" class="tabs tabs-boxed bg-base-100 p-1 rounded-lg">
+      <a role="tab" class="tab tab-active" aria-selected="true">All</a>
+      <a role="tab" class="tab" aria-selected="false">Untested</a>
+      <a role="tab" class="tab" aria-selected="false">Failed</a>
+      <a role="tab" class="tab" aria-selected="false">Passed</a>
+    </div>
+    <button type="button" class="btn btn-fill btn-success" aria-label="Add scenario">
+      <span class="p-1 leading-none">New Scenario</span>
+    </button>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <input type="search" placeholder="Search Scenarios" class="input input-bordered flex-1 min-w-0 max-w-md" name="q" />
+    <button type="button" class="btn btn-primary">RUN ALL</button>
+  </div>
+
+  <div class="flex-1 min-h-0">
+    { children... }
+  </div>
+</div>
+}

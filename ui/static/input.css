@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark, business;
+}
+
+/* Scan templ templates and generated Go for Tailwind classes */
+@source "../templates/**/*.templ";
+@source "../templates/**/*_templ.go";

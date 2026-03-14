@@ -1,0 +1,175 @@
+package ui
+
+//go:generate templ
+
+templ SaveScenarioModal() {
+<dialog id="saveScenarioModal" class="modal modal-bottom sm:modal-middle">
+  <form method="dialog" class="modal-box w-full max-w-2xl" x-data="scenarioForm()" @submit.prevent="handleSubmit">
+    <h3 class="font-bold text-lg mb-4">Create New Test Scenario</h3>
+
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text font-semibold">Scenario Title</span>
+      </label>
+      <input type="text" x-model="title" placeholder="e.g., Basic Key-Value Operations"
+        class="input input-bordered w-full" required />
+    </div>
+
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text font-semibold">Description</span>
+      </label>
+      <textarea x-model="description" placeholder="Describe what this scenario tests..."
+        class="textarea textarea-bordered w-full h-24"></textarea>
+    </div>
+
+    <!-- Commands Sequence Section -->
+    <div class="form-control w-full mb-4">
+      <label class="label">
+        <span class="label-text font-semibold">Commands Sequence</span>
+        <span class="label-text-alt text-gray-500">Drag to reorder</span>
+      </label>
+
+      <div id="commandsContainer" class="space-y-2 p-4 bg-base-200 rounded-lg border border-base-300 min-h-24"
+        @dragover.prevent="$event.dataTransfer.dropEffect = 'move'" @drop.prevent="handleDrop($event)">
+        <!-- Empty state -->
+        <div x-show="commands.length === 0" class="text-center text-gray-400 py-6">
+          <p>No commands added yet. Click "Add Command" to get started.</p>
+        </div>
+
+        <!-- Command rows -->
+        <template x-for="(cmd, index) in commands" :key="index">
+          <div class="command-row flex gap-2 items-center p-3 bg-base-100 rounded-lg border border-base-300"
+            draggable="true" @dragstart="draggedIndex = index" @dragend="draggedIndex = null" @dragover.prevent
+            @drop.prevent="moveCommand(draggedIndex, index)">
+            <!-- Drag Handle -->
+            <div class="cursor-move flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600">
+              <svg fill="currentColor" version="1.1" id="icon" xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 32 32" xml:space="preserve">
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                <g id="SVGRepo_iconCarrier">
+                  <style type="text/css">
+                    .st0 {
+                      fill: none;
+                    }
+                  </style>
+                  <title>draggable</title>
+                  <rect x="10" y="6" width="4" height="4"></rect>
+                  <rect x="18" y="6" width="4" height="4"></rect>
+                  <rect x="10" y="14" width="4" height="4"></rect>
+                  <rect x="18" y="14" width="4" height="4"></rect>
+                  <rect x="10" y="22" width="4" height="4"></rect>
+                  <rect x="18" y="22" width="4" height="4"></rect>
+                  <rect id="_Transparent_Rectangle_" class="st0" width="32" height="32"></rect>
+                </g>
+              </svg>
+            </div>
+
+            // <!-- Command Type Dropdown -->
+            // <select x-model="cmd.command" class="select select-bordered flex-shrink-0" aria-label="Redis command">
+              // <option value="">Select Command</option>
+              // <option value="PING">PING</option>
+              // <option value="ECHO">ECHO</option>
+              // <option value="SET">SET</option>
+              // <option value="GET">GET</option>
+              // </select>
+            <label class="mr-2">
+              <pre><code>redis</code></pre>
+            </label>
+
+            <!-- Arguments Input -->
+            <input type="text" x-model="commands[index]" placeholder="SET mykey &quot;Hello world&quot;"
+              class="input input-bordered flex-1" />
+
+            <!-- Remove Button -->
+            <button type="button" class="btn btn-sm btn-ghost text-error" aria-label="Remove command"
+              @click="removeCommand(index)">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                  clip-rule="evenodd"></path>
+              </svg>
+            </button>
+          </div>
+        </template>
+      </div>
+
+      <button type="button" class="btn btn-sm btn-outline btn-primary mt-3" @click="addCommand()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+            clip-rule="evenodd"></path>
+        </svg>
+        Add Command
+      </button>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="modal-action">
+      <button type="button" class="btn btn-ghost" @click="closeModal()">
+        Cancel
+      </button>
+      <button type="submit" class="btn btn-primary">
+        Save Scenario
+      </button>
+    </div>
+  </form>
+
+  <!-- Close button outside the form -->
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
+
+<script>
+  function scenarioForm() {
+    return {
+      title: '',
+      description: '',
+      commands: [],
+      draggedIndex: null,
+
+      addCommand() {
+        this.commands.push('');
+      },
+
+      removeCommand(index) {
+        this.commands.splice(index, 1);
+      },
+
+      moveCommand(fromIndex, toIndex) {
+        if (fromIndex === null || fromIndex === toIndex) return;
+        const [moved] = this.commands.splice(fromIndex, 1);
+        this.commands.splice(toIndex, 0, moved);
+      },
+
+      handleSubmit() {
+        const payload = {
+          title: this.title,
+          description: this.description,
+          commands: this.commands.filter(cmd => cmd && cmd.trim().length > 0)
+        };
+
+        console.log('Scenario to save:', payload);
+
+        // TODO: Send data to server via HTMX or fetch
+
+        this.closeModal();
+      },
+
+      closeModal() {
+        document.getElementById('saveScenarioModal').close();
+        // Reset form
+        this.title = '';
+        this.description = '';
+        this.commands = [];
+      },
+
+      handleDrop(e) {
+        e.preventDefault();
+      }
+    }
+  }
+</script>
+}
