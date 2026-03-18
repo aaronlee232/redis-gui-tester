@@ -1,17 +1,17 @@
 package app
 
 import (
-	"database/sql"
 	"net/http"
 
 	"github.com/a-h/templ"
+	"github.com/aaronlee232/redis-gui-tester/internal/database"
 	"github.com/aaronlee232/redis-gui-tester/internal/middleware"
 	"github.com/aaronlee232/redis-gui-tester/internal/scenario"
 	"github.com/aaronlee232/redis-gui-tester/internal/tester"
 	"github.com/aaronlee232/redis-gui-tester/internal/ui"
 )
 
-func NewRouter(db *sql.DB) *http.ServeMux {
+func NewRouter(repo *database.Registry) *http.ServeMux {
 	mux := http.NewServeMux()
 
 	// 1. Static Assets
@@ -19,8 +19,8 @@ func NewRouter(db *sql.DB) *http.ServeMux {
 	mux.Handle("/static/", http.StripPrefix("/static/", fileServer))
 
 	// 2. API Routes (mounted with middleware)
-	scenarioHandler := scenario.NewHandler(db)
-	testerHandler := tester.NewHandler(db)
+	scenarioHandler := scenario.NewHandler(repo)
+	testerHandler := tester.NewHandler(repo)
 
 	// Attach to base URLs
 	mux.Handle("/api/scenario/", http.StripPrefix("/api/scenario", middleware.StripTrailingSlash(scenarioHandler.RegisterRoutes())))

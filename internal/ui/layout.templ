@@ -14,7 +14,7 @@ templ Layout(title string) {
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.15.8/dist/cdn.min.js"></script>
 		</head>
 		<body class="min-h-screen bg-base-200 pt-8">
-			<main class="container mx-auto max-w-6xl p-4 flex flex-col gap-4" x-data>
+			<main class="container mx-auto max-w-6xl p-4 flex flex-col gap-4">
 				<h1 class="text-2xl font-bold">{ title }</h1>
 				<div class="flex flex-wrap items-center justify-between gap-2">
 					<div role="tablist" class="tabs tabs-boxed bg-base-100 p-1 rounded-lg">
@@ -55,6 +55,66 @@ templ Layout(title string) {
 			</div>
 			@components.ConfirmModal()
 			@components.Toast()
+			<script>
+				// Preserve open scenario accordions across HTMX swaps and reloads.
+				(function() {
+					function loadOpenIds() {
+						try {
+							const raw = localStorage.getItem("openScenarioIds");
+							if (!raw) return new Set();
+							const arr = JSON.parse(raw);
+							if (!Array.isArray(arr)) return new Set();
+							return new Set(arr.map(Number));
+						} catch {
+							return new Set();
+						}
+					}
+					function saveOpenIds(set) {
+						try {
+							localStorage.setItem("openScenarioIds", JSON.stringify(Array.from(set)));
+						} catch {}
+					}
+					window.openScenarioIds = loadOpenIds();
+
+					window.reopenScenarios = function() {
+						document.querySelectorAll("#scenario-list .collapse[data-scenario-id]").forEach(function(el) {
+							var id = Number(el.getAttribute("data-scenario-id"));
+							if (window.openScenarioIds.has(id)) {
+								var checkbox = el.querySelector("input[type=checkbox]");
+								if (checkbox) checkbox.checked = true;
+							}
+						});
+					};
+
+					window.addEventListener("scenario:toggled", function(ev) {
+						var id = ev.detail && ev.detail.id;
+						var open = ev.detail && ev.detail.open;
+						if (typeof id !== "number") return;
+						if (open) {
+							window.openScenarioIds.add(id);
+						} else {
+							window.openScenarioIds.delete(id);
+						}
+						saveOpenIds(window.openScenarioIds);
+					});
+
+					// Reopen accordions on initial load.
+					if (document.readyState === "complete" || document.readyState === "interactive") {
+						setTimeout(window.reopenScenarios, 0);
+					} else {
+						document.addEventListener("DOMContentLoaded", function() {
+							window.reopenScenarios();
+						});
+					}
+
+					// Also hook into htmx swaps for #scenario-list.
+					document.body.addEventListener("htmx:afterSwap", function(ev) {
+						if (ev.detail && ev.detail.target && ev.detail.target.id === "scenario-list") {
+							window.reopenScenarios();
+						}
+					});
+				})();
+			</script>
 			<script>
 				document.body.addEventListener("htmx:afterSwap", function(ev) {
 					if (ev.detail && ev.detail.target && ev.detail.target.id === "saveScenarioModalContainer") {

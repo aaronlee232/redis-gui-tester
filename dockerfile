@@ -38,6 +38,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o myapp ./cmd/app/main.go
 FROM alpine:latest
 WORKDIR /app
 
+# Install redis-cli for running test scenarios
+RUN apk add --no-cache redis
+
 # Copy the binary
 COPY --from=go-builder /app/myapp .
 # Copy public assets (images, js, and the built css)

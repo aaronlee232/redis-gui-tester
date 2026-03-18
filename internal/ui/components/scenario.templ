@@ -32,9 +32,13 @@ func getStatusColor(status models.ScenarioStatus) string {
 }
 
 // The individual item (Accordion)
-templ ScenarioItem(s *models.Scenario) {
-	<div class="collapse collapse-plus border border-base-300 bg-base-100 rounded-lg" x-data={ fmt.Sprintf("scenarioItem(%d)", s.ID) }>
-		<input type="checkbox" class="peer"/>
+templ ScenarioItem(s models.Scenario) {
+	<div class="collapse collapse-plus border border-base-300 bg-base-100 rounded-lg" x-data={ fmt.Sprintf("scenarioItem(%d)", s.ID) } data-scenario-id={ s.ID }>
+		<input
+			type="checkbox"
+			class="peer"
+			@change="window.dispatchEvent(new CustomEvent('scenario:toggled', { detail: { id: id, open: $event.target.checked } }))"
+		/>
 		<div class="collapse-title flex items-center gap-4 font-semibold text-base peer-checked:bg-base-200 transition-colors peer-checked:font-bold">
 			<!-- Status Icon -->
 			<span class={ "text-xl shrink-0", getStatusColor(s.Status) }>
@@ -155,6 +159,8 @@ templ ScenarioItem(s *models.Scenario) {
 				try {
 					const response = await fetch("/api/tester/run-scenario/" + this.id, { method: "POST" });
 					if (response.ok) {
+						// Refresh the scenario list so expected responses panel updates immediately
+						htmx.trigger("#scenario-list", "refreshScenarioList");
 						Alpine.store("toast").show("Scenario run completed", "success");
 					} else {
 						Alpine.store("toast").show("Run failed", "error");
@@ -170,7 +176,7 @@ templ ScenarioItem(s *models.Scenario) {
 }
 
 // The full list container
-templ ScenarioList(scenarios []*models.Scenario) {
+templ ScenarioList(scenarios []models.Scenario) {
 	<ul class="space-y-3">
 		for _, s := range scenarios {
 			@ScenarioItem(s)

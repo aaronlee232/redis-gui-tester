@@ -1,5 +1,9 @@
 package models
 
+import (
+	"context"
+)
+
 type ScenarioStatus string
 
 const (
@@ -25,4 +29,14 @@ func NewScenario(title string, description string, commands []string, expectedRe
 		ExpectedResponses: expectedResponses,
 		Status:            status,
 	}
+}
+
+type ScenarioStore interface {
+	Create(c context.Context, s *Scenario) error
+	GetById(c context.Context, id int) (Scenario, error)
+	GetAll(c context.Context) ([]Scenario, error)
+	Update(c context.Context, id int, s *Scenario) error
+	Delete(c context.Context, id int) error
+	// Run(c context.Context, id int) (string, error)
+	// RunAll(c context.Context) ([]string, error)
 }

@@ -19,16 +19,6 @@ func InitDB() *sql.DB {
 	// Set up app.db file
 	dbPath := filepath.Join(root, "data", "app.db")
 
-	// dir := filepath.Dir(dbPath)
-	// if err := os.MkdirAll(dir, 0755); err != nil {
-	// 	log.Fatalf("failed to create directories: %v", err)
-	// }
-	// if _, err := os.Stat(dbPath); os.IsNotExist(err) {
-	// 	// File does not exist, safe to create
-	// 	f, _ := os.Create(dbPath)
-	// 	defer f.Close()
-	// }
-
 	// Open DB Connection
 	dsn := dbPath + "?_foreign_keys=on"
 	db, err := sql.Open("sqlite", dsn)

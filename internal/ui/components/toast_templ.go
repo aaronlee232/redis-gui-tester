@@ -9,13 +9,12 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 // Toast is a generic toast notification driven by Alpine store "toast".
-// From any Alpine component, show a toast with:
+// Uses DaisyUI alert colors: alert-info, alert-success, alert-warning, alert-error.
 //
-//	$store.toast.show('Scenario created', 'success')
-//	$store.toast.show('Something went wrong', 'error')
+//	Alpine.store("toast").show('Scenario created', 'success')
+//	Alpine.store("toast").show('Something went wrong', 'error')
 //
-// Types: success, error, info, warning (default: info).
-// Register the store in your layout on alpine:init (see layout.templ).
+// Types: success (alert-success), error (alert-error), info (alert-info), warning (alert-warning).
 //
 //go:generate templ
 func Toast() templ.Component {
@@ -39,7 +38,7 @@ func Toast() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"toastContainer\" class=\"toast toast-end toast-top z-50 p-4\" x-data x-show=\"$store.toast.visible\" x-transition:enter=\"transition ease-out duration-200\" x-transition:enter-start=\"opacity-0 translate-x-4\" x-transition:enter-end=\"opacity-100 translate-x-0\" x-transition:leave=\"transition ease-in duration-150\" x-transition:leave-start=\"opacity-100 translate-x-0\" x-transition:leave-end=\"opacity-0 translate-x-4\" style=\"display: none\"><div class=\"alert shadow-lg max-w-sm\" :class=\"'alert-' + ($store.toast.type || 'info')\" role=\"alert\"><span x-text=\"$store.toast.message\"></span> <button type=\"button\" class=\"btn btn-ghost btn-sm btn-circle\" aria-label=\"Dismiss\" @click=\"$store.toast.dismiss()\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div id=\"toastContainer\" class=\"toast toast-end toast-top z-50 p-4\" x-data x-show=\"$store.toast.visible\" x-transition:enter=\"transition ease-out duration-200\" x-transition:enter-start=\"opacity-0 translate-x-4\" x-transition:enter-end=\"opacity-100 translate-x-0\" x-transition:leave=\"transition ease-in duration-150\" x-transition:leave-start=\"opacity-100 translate-x-0\" x-transition:leave-end=\"opacity-0 translate-x-4\" style=\"display: none\"><div class=\"alert shadow-lg max-w-sm\" :class=\"{ 'alert-info alert-soft': $store.toast.type === 'info' || !['success','warning','error'].includes($store.toast.type), 'alert-success alert-soft': $store.toast.type === 'success', 'alert-warning alert-soft': $store.toast.type === 'warning', 'alert-error alert-soft': $store.toast.type === 'error' }\" role=\"alert\"><span x-text=\"$store.toast.message\"></span> <button type=\"button\" class=\"btn btn-ghost btn-sm btn-circle\" aria-label=\"Dismiss\" @click=\"$store.toast.dismiss()\"><svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M6 18L18 6M6 6l12 12\"></path></svg></button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

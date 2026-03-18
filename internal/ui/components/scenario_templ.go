@@ -40,7 +40,7 @@ func getStatusColor(status models.ScenarioStatus) string {
 }
 
 // The individual item (Accordion)
-func ScenarioItem(s *models.Scenario) templ.Component {
+func ScenarioItem(s models.Scenario) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -74,127 +74,140 @@ func ScenarioItem(s *models.Scenario) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\"><input type=\"checkbox\" class=\"peer\"><div class=\"collapse-title flex items-center gap-4 font-semibold text-base peer-checked:bg-base-200 transition-colors peer-checked:font-bold\"><!-- Status Icon -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" data-scenario-id=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 = []any{"text-xl shrink-0", getStatusColor(s.Status)}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(s.ID)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 36, Col: 155}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span class=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"><input type=\"checkbox\" class=\"peer\" @change=\"window.dispatchEvent(new CustomEvent('scenario:toggled', { detail: { id: id, open: $event.target.checked } }))\"><div class=\"collapse-title flex items-center gap-4 font-semibold text-base peer-checked:bg-base-200 transition-colors peer-checked:font-bold\"><!-- Status Icon -->")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var3).String())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 1, Col: 0}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		var templ_7745c5c3_Var4 = []any{"text-xl shrink-0", getStatusColor(s.Status)}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<span class=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(getStatusIcon(s.Status))
+		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var4).String())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 41, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 1, Col: 0}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</span><!-- Scenario Title --><span class=\"grow\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(s.Title)
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(getStatusIcon(s.Status))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 44, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 45, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span></div><div class=\"collapse-content pt-4\"><div class=\"divider my-0\"></div><!-- Two-column layout --><div class=\"flex w-full\"><!-- Left Column --><div class=\"flex-1 flex flex-col space-y-4\"><!-- Description Section --><div><label class=\"label pb-2\"><span class=\"label-text font-semibold\">Description</span></label><p class=\"text-sm text-base-content/80 leading-relaxed\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</span><!-- Scenario Title --><span class=\"grow\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(s.Description)
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(s.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 57, Col: 77}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 48, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</p></div><!-- Commands Section --><div><label class=\"label pb-2\"><span class=\"label-text font-semibold\">Commands</span></label><div class=\"bg-base-900 text-base-100 p-3 rounded-lg text-xs overflow-x-auto border border-base-300 font-mono\"><code>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></div><div class=\"collapse-content pt-4\"><div class=\"divider my-0\"></div><!-- Two-column layout --><div class=\"flex w-full\"><!-- Left Column --><div class=\"flex-1 flex flex-col space-y-4\"><!-- Description Section --><div><label class=\"label pb-2\"><span class=\"label-text font-semibold\">Description</span></label><p class=\"text-sm text-base-content/80 leading-relaxed\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var8 string
+		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(s.Description)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 61, Col: 77}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</p></div><!-- Commands Section --><div><label class=\"label pb-2\"><span class=\"label-text font-semibold\">Commands</span></label><div class=\"bg-base-900 text-base-100 p-3 rounded-lg text-xs overflow-x-auto border border-base-300 font-mono\"><code>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, cmd := range s.Commands {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"py-1\"><span class=\"text-base-content/50\">$ redis-cli</span> <span class=\"text-base-content\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"py-1\"><span class=\"text-base-content/50\">$ redis-cli</span> <span class=\"text-base-content\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var8 string
-			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(cmd)
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(cmd)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 69, Col: 47}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 73, Col: 47}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</span></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</span></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</code></div></div><div class=\"mt-auto flex flex-row gap-2\"><!-- Run Button --><div class=\"grow pt-2\"><button type=\"button\" class=\"min-w-full btn btn-success btn-sm\" @click=\"runScenario()\">Run Scenario</button></div><!-- Edit Button --><div class=\"pt-2\"><button class=\"btn btn-primary btn-sm\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</code></div></div><div class=\"mt-auto flex flex-row gap-2\"><!-- Run Button --><div class=\"grow pt-2\"><button type=\"button\" class=\"min-w-full btn btn-success btn-sm\" @click=\"runScenario()\">Run Scenario</button></div><!-- Edit Button --><div class=\"pt-2\"><button class=\"btn btn-primary btn-sm\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 string
-		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/api/scenario/form/%d", s.ID))
+		var templ_7745c5c3_Var10 string
+		templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/api/scenario/form/%d", s.ID))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 84, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 88, Col: 59}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "\" hx-swap=\"innerHTML\" hx-target=\"#saveScenarioModalContainer\" hx-trigger=\"click\">Edit</button></div><!-- Delete Button --><div class=\"pt-2\"><button type=\"button\" class=\"btn btn-error btn-sm\" @click=\"$store.confirm.open({ title: 'Delete scenario?', message: 'This cannot be undone.', confirmLabel: 'Delete', confirmClass: 'btn-error', onConfirm: () => deleteScenario() })\">Delete</button></div></div></div><!-- Vertical Divider --><div class=\"grow-0 divider divider-horizontal\"></div><!-- Right Column (Terminal Output) --><div class=\"flex-1 space-y-4 flex flex-col\"><!-- Redis Responses Terminal --><div class=\"flex-1 flex flex-col\"><label class=\"label pb-2\"><span class=\"label-text font-semibold\">Redis Responses</span></label><div class=\"bg-base-900 text-success p-3 rounded-lg font-mono text-xs overflow-y-auto border border-base-600 flex-1 min-h-32\" hx-target=\"this\"><!-- Terminal content populated via HTMX or command execution --></div></div><!-- Horizontal Divider --><!-- Expected Responses Terminal --><div class=\"flex-1 flex flex-col\"><label class=\"label pb-2\"><span class=\"label-text font-semibold\">Expected Responses</span></label><div class=\"bg-base-900 text-info p-3 rounded-lg font-mono text-xs overflow-y-auto border border-base-600 flex-1 min-h-32\"><code>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "\" hx-swap=\"innerHTML\" hx-target=\"#saveScenarioModalContainer\" hx-trigger=\"click\">Edit</button></div><!-- Delete Button --><div class=\"pt-2\"><button type=\"button\" class=\"btn btn-error btn-sm\" @click=\"$store.confirm.open({ title: 'Delete scenario?', message: 'This cannot be undone.', confirmLabel: 'Delete', confirmClass: 'btn-error', onConfirm: () => deleteScenario() })\">Delete</button></div></div></div><!-- Vertical Divider --><div class=\"grow-0 divider divider-horizontal\"></div><!-- Right Column (Terminal Output) --><div class=\"flex-1 space-y-4 flex flex-col\"><!-- Redis Responses Terminal --><div class=\"flex-1 flex flex-col\"><label class=\"label pb-2\"><span class=\"label-text font-semibold\">Redis Responses</span></label><div class=\"bg-base-900 text-success p-3 rounded-lg font-mono text-xs overflow-y-auto border border-base-600 flex-1 min-h-32\" hx-target=\"this\"><!-- Terminal content populated via HTMX or command execution --></div></div><!-- Horizontal Divider --><!-- Expected Responses Terminal --><div class=\"flex-1 flex flex-col\"><label class=\"label pb-2\"><span class=\"label-text font-semibold\">Expected Responses</span></label><div class=\"bg-base-900 text-info p-3 rounded-lg font-mono text-xs overflow-y-auto border border-base-600 flex-1 min-h-32\"><code>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, res := range s.ExpectedResponses {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"py-1\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"py-1\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var10 string
-			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(res)
+			var templ_7745c5c3_Var11 string
+			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(res)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 127, Col: 32}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/ui/components/scenario.templ`, Line: 131, Col: 32}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</code></div></div></div></div></div></div><script>\n\tfunction scenarioItem(id) {\n\t\treturn {\n\t\t\tid: id,\n\t\t\tasync deleteScenario() {\n\t\t\t\ttry {\n\t\t\t\t\tconst response = await fetch(\"/api/scenario/delete/\" + this.id, { method: \"DELETE\" });\n\t\t\t\t\tif (response.ok) {\n\t\t\t\t\t\thtmx.trigger(\"#scenario-list\", \"refreshScenarioList\");\n\t\t\t\t\t\tAlpine.store(\"toast\").show(\"Scenario deleted\", \"success\");\n\t\t\t\t\t} else {\n\t\t\t\t\t\tAlpine.store(\"toast\").show(\"Delete failed\", \"error\");\n\t\t\t\t\t}\n\t\t\t\t} catch (error) {\n\t\t\t\t\tconsole.error(\"Error deleting scenario:\", error);\n\t\t\t\t\tAlpine.store(\"toast\").show(\"Delete failed\", \"error\");\n\t\t\t\t}\n\t\t\t},\n\t\t\tasync runScenario() {\n\t\t\t\ttry {\n\t\t\t\t\tconst response = await fetch(\"/api/tester/run-scenario/\" + this.id, { method: \"POST\" });\n\t\t\t\t\tif (response.ok) {\n\t\t\t\t\t\tAlpine.store(\"toast\").show(\"Scenario run completed\", \"success\");\n\t\t\t\t\t} else {\n\t\t\t\t\t\tAlpine.store(\"toast\").show(\"Run failed\", \"error\");\n\t\t\t\t\t}\n\t\t\t\t} catch (error) {\n\t\t\t\t\tconsole.error(\"Error running scenario:\", error);\n\t\t\t\t\tAlpine.store(\"toast\").show(\"Run failed\", \"error\");\n\t\t\t\t}\n\t\t\t},\n\t\t}\n\t}\n\t</script>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "</code></div></div></div></div></div></div><script>\n\tfunction scenarioItem(id) {\n\t\treturn {\n\t\t\tid: id,\n\t\t\tasync deleteScenario() {\n\t\t\t\ttry {\n\t\t\t\t\tconst response = await fetch(\"/api/scenario/delete/\" + this.id, { method: \"DELETE\" });\n\t\t\t\t\tif (response.ok) {\n\t\t\t\t\t\thtmx.trigger(\"#scenario-list\", \"refreshScenarioList\");\n\t\t\t\t\t\tAlpine.store(\"toast\").show(\"Scenario deleted\", \"success\");\n\t\t\t\t\t} else {\n\t\t\t\t\t\tAlpine.store(\"toast\").show(\"Delete failed\", \"error\");\n\t\t\t\t\t}\n\t\t\t\t} catch (error) {\n\t\t\t\t\tconsole.error(\"Error deleting scenario:\", error);\n\t\t\t\t\tAlpine.store(\"toast\").show(\"Delete failed\", \"error\");\n\t\t\t\t}\n\t\t\t},\n\t\t\tasync runScenario() {\n\t\t\t\ttry {\n\t\t\t\t\tconst response = await fetch(\"/api/tester/run-scenario/\" + this.id, { method: \"POST\" });\n\t\t\t\t\tif (response.ok) {\n\t\t\t\t\t\t// Refresh the scenario list so expected responses panel updates immediately\n\t\t\t\t\t\thtmx.trigger(\"#scenario-list\", \"refreshScenarioList\");\n\t\t\t\t\t\tAlpine.store(\"toast\").show(\"Scenario run completed\", \"success\");\n\t\t\t\t\t} else {\n\t\t\t\t\t\tAlpine.store(\"toast\").show(\"Run failed\", \"error\");\n\t\t\t\t\t}\n\t\t\t\t} catch (error) {\n\t\t\t\t\tconsole.error(\"Error running scenario:\", error);\n\t\t\t\t\tAlpine.store(\"toast\").show(\"Run failed\", \"error\");\n\t\t\t\t}\n\t\t\t},\n\t\t}\n\t}\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -203,7 +216,7 @@ func ScenarioItem(s *models.Scenario) templ.Component {
 }
 
 // The full list container
-func ScenarioList(scenarios []*models.Scenario) templ.Component {
+func ScenarioList(scenarios []models.Scenario) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -219,12 +232,12 @@ func ScenarioList(scenarios []*models.Scenario) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var11 == nil {
-			templ_7745c5c3_Var11 = templ.NopComponent
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<ul class=\"space-y-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<ul class=\"space-y-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -234,7 +247,7 @@ func ScenarioList(scenarios []*models.Scenario) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</ul>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

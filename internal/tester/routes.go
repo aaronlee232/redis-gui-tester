@@ -1,23 +1,23 @@
 package tester
 
 import (
-	"database/sql"
 	"net/http"
+
+	"github.com/aaronlee232/redis-gui-tester/internal/database"
 )
 
 type Handler struct {
-	db *sql.DB
+	repo *database.Registry
 }
 
-func NewHandler(db *sql.DB) *Handler {
-	return &Handler{db: db}
+func NewHandler(repo *database.Registry) *Handler {
+	return &Handler{repo: repo}
 }
 
 func (h *Handler) RegisterRoutes() *http.ServeMux {
 	r := http.NewServeMux()
 	r.HandleFunc("POST /run-scenario", h.RunAllScenarios)
 	r.HandleFunc("POST /run-scenario/{id}", h.RunScenario)
-	r.HandleFunc("GET /run-scenario/{id}", h.GetScenarioOutput)
 
 	return r
 }

@@ -1,16 +1,17 @@
 package scenario
 
 import (
-	"database/sql"
 	"net/http"
+
+	"github.com/aaronlee232/redis-gui-tester/internal/database"
 )
 
 type Handler struct {
-	db *sql.DB
+	repo *database.Registry
 }
 
-func NewHandler(db *sql.DB) *Handler {
-	return &Handler{db: db}
+func NewHandler(repo *database.Registry) *Handler {
+	return &Handler{repo: repo}
 }
 
 func (h *Handler) RegisterRoutes() *http.ServeMux {
