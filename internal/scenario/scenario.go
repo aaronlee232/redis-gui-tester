@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/aaronlee232/redis-gui-tester/internal/models"
-	ui "github.com/aaronlee232/redis-gui-tester/internal/ui/components"
 	"github.com/aaronlee232/redis-gui-tester/internal/utils"
 )
 
@@ -39,39 +38,8 @@ func (h *Handler) GetAllScenarios(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Return rendered HTML
-	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(http.StatusOK)
-	ui.ScenarioList(scenarios).Render(r.Context(), w)
-}
-
-// Form returns the save scenario modal HTML for create (no scenario).
-func (h *Handler) Form(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html")
-	ui.SaveScenarioModal(nil).Render(r.Context(), w)
-}
-
-// FormByID returns the save scenario modal HTML for edit (scenario prefilled).
-func (h *Handler) FormByID(w http.ResponseWriter, r *http.Request) {
-	idStr := r.PathValue("id")
-	if idStr == "" {
-		http.Error(w, "missing scenario id", http.StatusBadRequest)
-		return
-	}
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		http.Error(w, "invalid scenario id", http.StatusBadRequest)
-		return
-	}
-
-	s, err := h.repo.Scenarios.GetById(r.Context(), id)
-	if err != nil {
-		http.Error(w, "scenario not found", http.StatusNotFound)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/html")
-	ui.SaveScenarioModal(&s).Render(r.Context(), w)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(scenarios)
 }
 
 func (h *Handler) CreateScenario(w http.ResponseWriter, r *http.Request) {

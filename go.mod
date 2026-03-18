@@ -2,10 +2,7 @@ module github.com/aaronlee232/redis-gui-tester
 
 go 1.25.4
 
-require (
-	github.com/a-h/templ v0.3.1001
-	modernc.org/sqlite v1.46.1
-)
+require modernc.org/sqlite v1.46.1
 
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
