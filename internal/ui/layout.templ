@@ -1,6 +1,6 @@
 package ui
 
-import "github.com/aaronlee232/redis-gui-tester/internal/ui/components"
+import components "github.com/aaronlee232/redis-gui-tester/internal/ui/components"
 
 //go:generate templ
 templ Layout(title string) {
@@ -27,7 +27,7 @@ templ Layout(title string) {
 						type="button"
 						class="btn btn-fill btn-success"
 						aria-label="Add scenario"
-						@click="document.getElementById('saveScenarioModal').showModal()"
+						@click="document.getElementById('saveScenarioModal')?.showModal()"
 					>
 						<span class="p-1 leading-none">New Scenario</span>
 					</button>
@@ -50,7 +50,65 @@ templ Layout(title string) {
 					></ul>
 				</div>
 			</main>
-			@ui.SaveScenarioModal()
+			<div id="saveScenarioModalContainer">
+				@components.SaveScenarioModal(nil)
+			</div>
+			@components.ConfirmModal()
+			@components.Toast()
+			<script>
+				document.body.addEventListener("htmx:afterSwap", function(ev) {
+					if (ev.detail && ev.detail.target && ev.detail.target.id === "saveScenarioModalContainer") {
+						var d = document.getElementById("saveScenarioModal");
+						if (d && typeof d.showModal === "function") d.showModal();
+					}
+				});
+			</script>
+			<script>
+				document.addEventListener("alpine:init", function() {
+					Alpine.store("confirm", {
+						show: false,
+						title: "",
+						message: "",
+						confirmLabel: "Confirm",
+						cancelLabel: "Cancel",
+						confirmClass: "btn-primary",
+						onConfirm: null,
+						open: function(opts) {
+							this.title = opts.title != null ? opts.title : "Confirm";
+							this.message = opts.message != null ? opts.message : "";
+							this.confirmLabel = opts.confirmLabel != null ? opts.confirmLabel : "Confirm";
+							this.cancelLabel = opts.cancelLabel != null ? opts.cancelLabel : "Cancel";
+							this.confirmClass = opts.confirmClass != null ? opts.confirmClass : "btn-primary";
+							this.onConfirm = typeof opts.onConfirm === "function" ? opts.onConfirm : function() {};
+							this.show = true;
+						},
+						close: function() { this.show = false; },
+						runConfirm: async function() {
+							if (this.onConfirm) await Promise.resolve(this.onConfirm());
+							this.close();
+						}
+					});
+					Alpine.store("toast", {
+						visible: false,
+						message: "",
+						type: "info",
+						_timeoutId: null,
+						duration: 4000,
+						show: function(msg, type) {
+							if (this._timeoutId) clearTimeout(this._timeoutId);
+							this.message = msg != null ? msg : "";
+							this.type = (type === "success" || type === "error" || type === "info" || type === "warning") ? type : "info";
+							this.visible = true;
+							var self = this;
+							this._timeoutId = setTimeout(function() { self.dismiss(); }, self.duration);
+						},
+						dismiss: function() {
+							if (this._timeoutId) { clearTimeout(this._timeoutId); this._timeoutId = null; }
+							this.visible = false;
+						}
+					});
+				});
+			</script>
 		</body>
 	</html>
 }

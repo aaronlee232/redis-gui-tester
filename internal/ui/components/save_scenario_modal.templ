@@ -1,10 +1,26 @@
 package ui
 
+import (
+	"encoding/json"
+	"github.com/aaronlee232/redis-gui-tester/internal/models"
+)
+
+func toJSON(v any) string {
+	b, _ := json.Marshal(v)
+	return string(b)
+}
+
 //go:generate templ
-templ SaveScenarioModal() {
+templ SaveScenarioModal(s *models.Scenario) {
 	<dialog id="saveScenarioModal" class="modal modal-bottom sm:modal-middle">
-		<form method="dialog" class="modal-box w-full max-w-2xl" x-data="scenarioForm()" @submit.prevent="handleSubmit">
-			<h3 class="font-bold text-lg mb-4">Create New Test Scenario</h3>
+		<form method="dialog" class="modal-box w-full max-w-2xl" x-data={ "scenarioForm(" + toJSON(s) + ")" } @submit.prevent="handleSubmit">
+			<h3 class="font-bold text-lg mb-4">
+				if s == nil {
+					Create New Test Scenario
+				} else {
+					Edit Scenario
+				}
+			</h3>
 			<div class="form-control w-full mb-4">
 				<label class="label">
 					<span class="label-text font-semibold">Scenario Title</span>
@@ -84,7 +100,7 @@ templ SaveScenarioModal() {
 								</svg>
 							</div>
 							<label class="mr-2">
-								<pre><code>redis</code></pre>
+								<pre><code>redis-cli</code></pre>
 							</label>
 							<!-- Arguments Input -->
 							<input
@@ -128,7 +144,11 @@ templ SaveScenarioModal() {
 					Cancel
 				</button>
 				<button type="submit" class="btn btn-primary">
-					Save Scenario
+					if s == nil {
+						Create 
+					} else {
+						Save Changes 
+					}
 				</button>
 			</div>
 		</form>
@@ -138,11 +158,13 @@ templ SaveScenarioModal() {
 		</form>
 	</dialog>
 	<script>
-  function scenarioForm() {
+  function scenarioForm(s) {
+    const isEdit = s && s.ID;
     return {
-      title: '',
-      description: '',
-      commands: [],
+      id: isEdit ? s.ID : null,
+      title: (s && s.title) ? s.title : "",
+      description: (s && s.description) ? s.description : "",
+      commands: (s && s.commands && s.commands.length) ? [...s.commands] : [],
       draggedIndex: null,
 
       addCommand() {
@@ -166,32 +188,35 @@ templ SaveScenarioModal() {
           commands: this.commands.filter(cmd => cmd && cmd.trim().length > 0)
         };
 
-        console.log('Scenario to save:', payload);
+        const url = this.id ? `/api/scenario/update/${this.id}` : "/api/scenario/create";
+        const method = this.id ? "PUT" : "POST";
 
-        // Send data to server via fetch
         try {
-          const response = await fetch("/api/scenario/create", {
-            method: "POST",
+          const response = await fetch(url, {
+            method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
-          })
-
-          console.log(response)
+          });
           if (response.ok) {
-            // Refresh scenario list
-            htmx.trigger("#scenario-list", "refreshScenarioList")
+            htmx.trigger("#scenario-list", "refreshScenarioList");
             this.closeModal();
+            if (this.id) {
+              Alpine.store("toast").show("Scenario saved", "success");
+            } else {
+              Alpine.store("toast").show("Scenario created", "success");
+            }
           } else {
-            console.log("Save failed")
+            Alpine.store("toast").show("Save failed", "error");
           }
         } catch (error) {
-          console.error('Error saving scenario:', err);
+          console.error("Error saving scenario:", error);
+          Alpine.store("toast").show("Save failed", "error");
         }
       },
 
       closeModal() {
-        document.getElementById('saveScenarioModal').close();
-        // Reset form
+        const dialog = document.getElementById('saveScenarioModal');
+        if (dialog) dialog.close();
         this.title = '';
         this.description = '';
         this.commands = [];

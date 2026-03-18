@@ -1,6 +1,9 @@
 package ui
 
-import "github.com/aaronlee232/redis-gui-tester/internal/models"
+import (
+	"fmt"
+	"github.com/aaronlee232/redis-gui-tester/internal/models"
+)
 
 //go:generate templ
 
@@ -30,7 +33,7 @@ func getStatusColor(status models.ScenarioStatus) string {
 
 // The individual item (Accordion)
 templ ScenarioItem(s *models.Scenario) {
-	<div class="collapse collapse-plus border border-base-300 bg-base-100 rounded-lg">
+	<div class="collapse collapse-plus border border-base-300 bg-base-100 rounded-lg" x-data={ fmt.Sprintf("scenarioItem(%d)", s.ID) }>
 		<input type="checkbox" class="peer"/>
 		<div class="collapse-title flex items-center gap-4 font-semibold text-base peer-checked:bg-base-200 transition-colors peer-checked:font-bold">
 			<!-- Status Icon -->
@@ -72,15 +75,29 @@ templ ScenarioItem(s *models.Scenario) {
 					<div class="mt-auto flex flex-row gap-2">
 						<!-- Run Button -->
 						<div class="grow pt-2">
-							<button class="min-w-full btn btn-success btn-sm">Run Scenario</button>
+							<button type="button" class="min-w-full btn btn-success btn-sm" @click="runScenario()">Run Scenario</button>
 						</div>
 						<!-- Edit Button -->
 						<div class="pt-2">
-							<button class="btn btn-primary btn-sm">Edit</button>
+							<button
+								class="btn btn-primary btn-sm"
+								hx-get={ fmt.Sprintf("/api/scenario/form/%d", s.ID) }
+								hx-swap="innerHTML"
+								hx-target="#saveScenarioModalContainer"
+								hx-trigger="click"
+							>
+								Edit
+							</button>
 						</div>
 						<!-- Delete Button -->
 						<div class="pt-2">
-							<button class="btn btn-error btn-sm">Delete</button>
+							<button
+								type="button"
+								class="btn btn-error btn-sm"
+								@click="$store.confirm.open({ title: 'Delete scenario?', message: 'This cannot be undone.', confirmLabel: 'Delete', confirmClass: 'btn-error', onConfirm: () => deleteScenario() })"
+							>
+								Delete
+							</button>
 						</div>
 					</div>
 				</div>
@@ -116,6 +133,40 @@ templ ScenarioItem(s *models.Scenario) {
 			</div>
 		</div>
 	</div>
+	<script>
+	function scenarioItem(id) {
+		return {
+			id: id,
+			async deleteScenario() {
+				try {
+					const response = await fetch("/api/scenario/delete/" + this.id, { method: "DELETE" });
+					if (response.ok) {
+						htmx.trigger("#scenario-list", "refreshScenarioList");
+						Alpine.store("toast").show("Scenario deleted", "success");
+					} else {
+						Alpine.store("toast").show("Delete failed", "error");
+					}
+				} catch (error) {
+					console.error("Error deleting scenario:", error);
+					Alpine.store("toast").show("Delete failed", "error");
+				}
+			},
+			async runScenario() {
+				try {
+					const response = await fetch("/api/tester/run-scenario/" + this.id, { method: "POST" });
+					if (response.ok) {
+						Alpine.store("toast").show("Scenario run completed", "success");
+					} else {
+						Alpine.store("toast").show("Run failed", "error");
+					}
+				} catch (error) {
+					console.error("Error running scenario:", error);
+					Alpine.store("toast").show("Run failed", "error");
+				}
+			},
+		}
+	}
+	</script>
 }
 
 // The full list container

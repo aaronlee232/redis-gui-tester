@@ -24,6 +24,9 @@ COPY . .
 # Copy the CSS from the previous stage
 COPY --from=tailwind-builder /app/public/css/output.css ./public/css/output.css
 
+# Remove stale generated files so templ regenerates them fresh
+RUN find . -name "*_templ.go" -delete
+
 # Run templ generate (scans your .templ files in internal/ui)
 RUN templ generate
 

@@ -8,7 +8,7 @@ package ui
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import "github.com/aaronlee232/redis-gui-tester/internal/ui/components"
+import components "github.com/aaronlee232/redis-gui-tester/internal/ui/components"
 
 //go:generate templ
 func Layout(title string) templ.Component {
@@ -58,15 +58,27 @@ func Layout(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</h1><div class=\"flex flex-wrap items-center justify-between gap-2\"><div role=\"tablist\" class=\"tabs tabs-boxed bg-base-100 p-1 rounded-lg\"><a role=\"tab\" class=\"tab tab-active\" aria-selected=\"true\">All</a> <a role=\"tab\" class=\"tab\" aria-selected=\"false\">Untested</a> <a role=\"tab\" class=\"tab\" aria-selected=\"false\">Failed</a> <a role=\"tab\" class=\"tab\" aria-selected=\"false\">Passed</a></div><button type=\"button\" class=\"btn btn-fill btn-success\" aria-label=\"Add scenario\" @click=\"document.getElementById('saveScenarioModal').showModal()\"><span class=\"p-1 leading-none\">New Scenario</span></button></div><div class=\"flex flex-wrap items-center gap-2\"><input type=\"search\" placeholder=\"Search Scenarios\" class=\"input input-bordered flex-1 min-w-0 max-w-md\" name=\"q\"> <button type=\"button\" class=\"btn btn-primary\">RUN ALL</button></div><div class=\"flex-1 min-h-0\"><ul id=\"scenario-list\" hx-get=\"/api/scenario/get-all\" hx-trigger=\"load, refreshScenarioList\"></ul></div></main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</h1><div class=\"flex flex-wrap items-center justify-between gap-2\"><div role=\"tablist\" class=\"tabs tabs-boxed bg-base-100 p-1 rounded-lg\"><a role=\"tab\" class=\"tab tab-active\" aria-selected=\"true\">All</a> <a role=\"tab\" class=\"tab\" aria-selected=\"false\">Untested</a> <a role=\"tab\" class=\"tab\" aria-selected=\"false\">Failed</a> <a role=\"tab\" class=\"tab\" aria-selected=\"false\">Passed</a></div><button type=\"button\" class=\"btn btn-fill btn-success\" aria-label=\"Add scenario\" @click=\"document.getElementById('saveScenarioModal')?.showModal()\"><span class=\"p-1 leading-none\">New Scenario</span></button></div><div class=\"flex flex-wrap items-center gap-2\"><input type=\"search\" placeholder=\"Search Scenarios\" class=\"input input-bordered flex-1 min-w-0 max-w-md\" name=\"q\"> <button type=\"button\" class=\"btn btn-primary\">RUN ALL</button></div><div class=\"flex-1 min-h-0\"><ul id=\"scenario-list\" hx-get=\"/api/scenario/get-all\" hx-trigger=\"load, refreshScenarioList\"></ul></div></main><div id=\"saveScenarioModalContainer\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = ui.SaveScenarioModal().Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.SaveScenarioModal(nil).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.ConfirmModal().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = components.Toast().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<script>\n\t\t\t\tdocument.body.addEventListener(\"htmx:afterSwap\", function(ev) {\n\t\t\t\t\tif (ev.detail && ev.detail.target && ev.detail.target.id === \"saveScenarioModalContainer\") {\n\t\t\t\t\t\tvar d = document.getElementById(\"saveScenarioModal\");\n\t\t\t\t\t\tif (d && typeof d.showModal === \"function\") d.showModal();\n\t\t\t\t\t}\n\t\t\t\t});\n\t\t\t</script><script>\n\t\t\t\tdocument.addEventListener(\"alpine:init\", function() {\n\t\t\t\t\tAlpine.store(\"confirm\", {\n\t\t\t\t\t\tshow: false,\n\t\t\t\t\t\ttitle: \"\",\n\t\t\t\t\t\tmessage: \"\",\n\t\t\t\t\t\tconfirmLabel: \"Confirm\",\n\t\t\t\t\t\tcancelLabel: \"Cancel\",\n\t\t\t\t\t\tconfirmClass: \"btn-primary\",\n\t\t\t\t\t\tonConfirm: null,\n\t\t\t\t\t\topen: function(opts) {\n\t\t\t\t\t\t\tthis.title = opts.title != null ? opts.title : \"Confirm\";\n\t\t\t\t\t\t\tthis.message = opts.message != null ? opts.message : \"\";\n\t\t\t\t\t\t\tthis.confirmLabel = opts.confirmLabel != null ? opts.confirmLabel : \"Confirm\";\n\t\t\t\t\t\t\tthis.cancelLabel = opts.cancelLabel != null ? opts.cancelLabel : \"Cancel\";\n\t\t\t\t\t\t\tthis.confirmClass = opts.confirmClass != null ? opts.confirmClass : \"btn-primary\";\n\t\t\t\t\t\t\tthis.onConfirm = typeof opts.onConfirm === \"function\" ? opts.onConfirm : function() {};\n\t\t\t\t\t\t\tthis.show = true;\n\t\t\t\t\t\t},\n\t\t\t\t\t\tclose: function() { this.show = false; },\n\t\t\t\t\t\trunConfirm: async function() {\n\t\t\t\t\t\t\tif (this.onConfirm) await Promise.resolve(this.onConfirm());\n\t\t\t\t\t\t\tthis.close();\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t\tAlpine.store(\"toast\", {\n\t\t\t\t\t\tvisible: false,\n\t\t\t\t\t\tmessage: \"\",\n\t\t\t\t\t\ttype: \"info\",\n\t\t\t\t\t\t_timeoutId: null,\n\t\t\t\t\t\tduration: 4000,\n\t\t\t\t\t\tshow: function(msg, type) {\n\t\t\t\t\t\t\tif (this._timeoutId) clearTimeout(this._timeoutId);\n\t\t\t\t\t\t\tthis.message = msg != null ? msg : \"\";\n\t\t\t\t\t\t\tthis.type = (type === \"success\" || type === \"error\" || type === \"info\" || type === \"warning\") ? type : \"info\";\n\t\t\t\t\t\t\tthis.visible = true;\n\t\t\t\t\t\t\tvar self = this;\n\t\t\t\t\t\t\tthis._timeoutId = setTimeout(function() { self.dismiss(); }, self.duration);\n\t\t\t\t\t\t},\n\t\t\t\t\t\tdismiss: function() {\n\t\t\t\t\t\t\tif (this._timeoutId) { clearTimeout(this._timeoutId); this._timeoutId = null; }\n\t\t\t\t\t\t\tthis.visible = false;\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t});\n\t\t\t</script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
